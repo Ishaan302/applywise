@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, MetaData # creates a SQLAlchemy Engine.
-from sqlalchemy.orm import sessionmaker, declarative_base # (sessionmaker creates session ,talks through engine ->postgresql), (declarativebase creates the base class that SQLAlchemy models will inherit from.)   
-import os
-from dotenv import load_dotenv   # It allows Python to read var from a .env file.
+from sqlalchemy.orm import sessionmaker, declarative_base # (sessionmaker creates session,talks through engine ->postgresql), (declarativebase creates the base class that SQLAlchemy models will inherit from.)   
+import os   # Lets Python read environment variables such as DATABASE_URL.
+from dotenv import load_dotenv   # Imports the function that loads variables from .env file.
 
 load_dotenv()  # Read the .env file and load its var into the environment.
 

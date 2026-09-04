@@ -1,3 +1,5 @@
+# defines Who is this user, and are their credentials/token valid?
+
 from passlib.context import CryptContext  # its like saying passlib that i want to use bcrypt for pswd hashing
 from jose import jwt
 from datetime import datetime, timedelta

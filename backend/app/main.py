@@ -1,3 +1,5 @@
+# What should happen when an HTTP request reaches this endpoint?
+
 from fastapi import FastAPI,HTTPException, Depends  # calling get_db() nd give taking database session
 from sqlalchemy.orm import Session
 from . import models, schemas

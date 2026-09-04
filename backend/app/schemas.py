@@ -5,7 +5,7 @@ from typing import Optional
 from datetime import datetime
 from .models import StatusEnum, PriorityEnum, RoundTypeEnum, OutcomeEnum
 
-class ApplicationCreate(BaseModel):  # describing what the client is allowed to send when creating a new application
+class ApplicationCreate(BaseModel):  # describing what the client is allowed to send when creating a new application(client request)
     company: str
     role: str
     location: Optional[str] = None
@@ -17,7 +17,7 @@ class ApplicationCreate(BaseModel):  # describing what the client is allowed to 
     resume_used: Optional[str] = None
     notes: Optional[str] = None
 
-class ApplicationOut(ApplicationCreate):  # describing what server sends to clients while inheriting ApplicationCreate
+class ApplicationOut(ApplicationCreate):  # describing what server sends to clients while inheriting ApplicationCreate(server response)
     id: int
     is_archived: bool
     created_at: datetime
@@ -26,7 +26,7 @@ class ApplicationOut(ApplicationCreate):  # describing what server sends to clie
         from_attributes = True
 
 
-class ApplicationUpdate(BaseModel):   # for patch 
+class ApplicationUpdate(BaseModel):   # Defines the fields the client is allowed to change with patch,
     company: Optional[str] = None
     role: Optional[str] = None
     location: Optional[str] = None
@@ -39,14 +39,14 @@ class ApplicationUpdate(BaseModel):   # for patch
     notes: Optional[str] = None
 
 
-class UserCreate(BaseModel):  # describing what the client is allowed to send when creating a user
+class UserCreate(BaseModel):  # describing what the client is allowed to send when registering a user
     email:str
     password:str
 
 
 class Token(BaseModel):  # response from the login endpoint.
-    access_token:str
-    token_type:str = "bearer"
+    access_token:str   # Contains the JWT issued to the client.
+    token_type:str = "bearer"   # Tells the client that the token should be sent using the Bearer authentication scheme.
 
 
 class RoundCreate(BaseModel): # what client send when creating a interview round

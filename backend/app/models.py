@@ -6,7 +6,7 @@ from .database import Base
 import enum
 from sqlalchemy import ForeignKey
 
-class StatusEnum(str, enum.Enum):  # we allowed the application status 
+class StatusEnum(str, enum.Enum):  # Defines the only allowed application-status values. 
     saved = "Saved"
     applied = "Applied"
     oa = "OA"
@@ -21,7 +21,7 @@ class PriorityEnum(str, enum.Enum):  # setting priorities
     low = "Low"
 
 class Application(Base):   # describing table using py, nd sqlalchemy translates that model into database operations.
-    __tablename__ = "applications"  # table name
+    __tablename__ = "applications" 
 
     id = Column(Integer, primary_key=True, index=True)
     company = Column(String, nullable=False)
@@ -38,10 +38,10 @@ class Application(Base):   # describing table using py, nd sqlalchemy translates
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False) #Every application must belong to one existing user.
 
 
-class User(Base):
+class User(Base):  #defining user table 
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
