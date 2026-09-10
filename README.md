@@ -1,5 +1,7 @@
 # Applywise
 
+![CI](https://github.com/Ishaan302/applywise/actions/workflows/ci.yml/badge.svg)
+
 A full-stack web app to log, manage, and analyse job applications — built to replace the messy spreadsheet most students use to track internship and job hunts.
 
 ## Why
