@@ -1,0 +1,107 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ishaan
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: jobtracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ishaan -d jobtracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://ishaan:secret@db:5432/jobtracker
+      SECRET_KEY: dev-secret-change-in-real-deployment
+      ENVIRONMENT: development
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/src
+
+volumes:
+  postgres_data:
+
+
+
+# it connects all 3 containers 
+      #               docker-compose.yml
+      #                           │
+      #        "Start and connect all these services"
+      #                           │
+      #       ┌───────────────────┼───────────────────┐
+      #       ↓                   ↓                   ↓
+      #   PostgreSQL           FastAPI              React
+      #     db                 backend             frontend
+      #     :5432               :8000               :5173
+
+      
+
+  
+        #                docker compose up
+        #                       │
+        #                       ↓
+        #               ┌───────────────┐
+        #               │ PostgreSQL    │
+        #               └───────┬───────┘
+        #                       │
+        #                 health check
+        #                       │
+        #                     ✅
+        #                       ↓
+        #               ┌───────────────┐
+        #               │ FastAPI       │
+        #               │ :8000         │
+        #               └───────┬───────┘
+        #                       │
+        #                       ↓
+        #               ┌───────────────┐
+        #               │ React/Vite    │
+        #               │ :5173         │
+        #               └───────────────┘
+              
+
+
+
+
+  #                         COMPUTER
+  #                             │
+  #                   docker compose up
+  #                             │
+  #                             ▼
+  #             ┌───────────────────────────┐
+  #             │       Docker Compose      │
+  #             │        (manager)          │
+  #             └─────────────┬─────────────┘
+  #                           │
+  #         ┌─────────────────┼─────────────────┐
+  #         │                 │                 │
+  #         ▼                 ▼                 ▼
+  #   ┌──────────┐      ┌──────────┐      ┌──────────┐
+  #   │    DB    │      │ Backend  │      │ Frontend │
+  #   │          │◄─────│ FastAPI  │      │  React   │
+  #   │ Postgres │      │          │      │  Vite    │
+  #   │  :5432   │      │  :8000   │      │  :5173   │
+  #   └────┬─────┘      └──────────┘      └──────────┘
+  #        │
+  #        ▼
+  #  postgres_data
