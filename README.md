@@ -10,15 +10,14 @@ When you're applying to dozens of companies, spreadsheets fall apart fast. There
 
 ## Features
 
-- **Application tracking** — log company, role, location, salary, source, resume version, and notes for every application
+- **Application tracking** — log company, role, location, source, job URL, salary, resume version, and notes for every application
 - **Status pipeline** — move applications through Saved → Applied → OA → Interview → Offer → Rejected → Withdrawn
 - **Interview rounds** — log each round separately (phone screen, technical, HR, system design) with outcome and notes
-- **Dashboard** — total applications, response rate, interview conversion rate, offer rate, applications per week
-- **Analytics** — weekly volume trends, status funnel, company response comparison, application heatmap, salary distribution
-- **Resume matcher** — paste a job description and compare it against your resume to get a match score and a list of missing keywords
-- **Search, filter, and sort** — by company, role, status, source, date range, or salary range
-- **CSV export** — export all applications or a filtered subset
-- **Accounts** — register and log in, with all data scoped to your own account
+- **Dashboard** — total applications, response rate, interview conversion rate, offer rate
+- **Analytics endpoints** — weekly application volume and status funnel (backend complete; frontend charts not yet built)
+- **Accounts** — register and log in with JWT, all data scoped to your own account
+- **Automated tests** — 11 pytest tests covering auth, CRUD, user isolation, and analytics, run on every push via GitHub Actions
+- **One-command local setup** — full stack (Postgres + backend + frontend) via Docker Compose
 
 ## Tech Stack
 
@@ -31,45 +30,59 @@ When you're applying to dozens of companies, spreadsheets fall apart fast. There
 | Analytics | Pandas |
 | Frontend | React + Vite |
 | Styling | Tailwind CSS |
-| Charts | Recharts |
 | HTTP client | Axios |
-| Containers | Docker + docker-compose |
+| Containers | Docker + Docker Compose |
+| Tests | pytest + httpx |
+| CI | GitHub Actions |
+
 
 ## Project Structure
 
 ```
 applywise/
 ├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── database.py
-│   │   ├── models.py
-│   │   ├── schemas.py
-│   │   ├── routers/
-│   │   │   ├── applications.py
-│   │   │   ├── auth.py
-│   │   │   └── analytics.py
-│   │   └── utils/
-│   │       ├── auth.py
-│   │       └── analytics_engine.py
-│   ├── requirements.txt
-│   └── .env
+│ ├── app/
+│ │ ├── main.py
+│ │ ├── database.py
+│ │ ├── models.py
+│ │ ├── schemas.py
+│ │ └── utils/
+│ │ ├── auth.py
+│ │ └── analytics_engine.py
+│ ├── tests/
+│ │ ├── conftest.py
+│ │ ├── test_auth.py
+│ │ ├── test_applications.py
+│ │ └── test_analytics.py
+│ ├── Dockerfile
+│ ├── requirements.txt
+│ └── .env # not committed — see setup below
 ├── frontend/
-│   ├── src/
-│   │   ├── pages/
-│   │   ├── components/
-│   │   └── api/
-│   └── package.json
+│ ├── src/
+│ │ ├── pages/ # Login, Dashboard, Applications
+│ │ ├── components/ # PrivateRoute
+│ │ └── api/client.js
+│ ├── Dockerfile
+│ └── package.json
+├── .github/workflows/ci.yml
 └── docker-compose.yml
-```
 
 ## Getting Started
 
-### Prerequisites
+### Option A — Docker Compose (recommended)
 
-- Python 3.11+
-- Node.js
-- Docker (recommended, for Postgres and full setup)
+```bash
+git clone https://github.com/Ishaan302/applywise.git
+cd applywise
+docker compose up --build
+```
+
+- Backend API docs: `http://localhost:8000/docs`
+- Frontend: `http://localhost:5173`
+
+Postgres, the backend, and the frontend all start together, correctly wired, with hot-reload on both backend and frontend code.
+
+### Option B — Manual setup
 
 ### Backend
 
@@ -109,6 +122,12 @@ App available at `http://localhost:5173`.
 ```bash
 docker-compose up --build
 ```
+## Run tests
+
+```bash
+cd backend
+pytest tests/ -v
+```
 
 ## API Overview
 
@@ -146,7 +165,21 @@ User
   DELETE /users/me
 ```
 
-## What This Project Doesn't Do
+
+## Roadmap
+
+Not built yet — listed here rather than in Features above, since none of these exist in the app right now:
+
+- Analytics page with actual charts (Recharts) — endpoints exist, frontend visualization doesn't
+- Resume ↔ job description matcher (keyword overlap, then sentence-embedding similarity)
+- Search, filter, and sort on the applications list
+- CSV export
+- Settings page (change password, delete account)
+- Alembic migrations (currently using `create_all()`)
+- Rate limiting on auth endpoints
+- Deployed live demo
+
+## What This Project Doesn't Do (by design)
 
 - No auto-apply or scraping of job platforms
 - No email integration (no reading Gmail/Outlook to detect replies)
