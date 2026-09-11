@@ -67,6 +67,8 @@ applywise/
 ├── .github/workflows/ci.yml
 └── docker-compose.yml
 
+
+```
 ## Getting Started
 
 ### Option A — Docker Compose (recommended)
